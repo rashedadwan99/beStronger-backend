@@ -15,7 +15,6 @@ const server = app.listen(port, () => {
   winston.info(`listening on port ${port}`);
 });
 io = socket(server, {
-  pingTimeOut: 60000,
   cors: {
     origin: "http://localhost:3000",
   },

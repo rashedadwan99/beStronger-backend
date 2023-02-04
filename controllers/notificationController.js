@@ -26,7 +26,9 @@ const getNotifications = asyncHandler(async (req, res) => {
   try {
     const notifications = await Notification.find({
       reciver: req.user._id,
-    }).populate("sender", "name picture");
+    })
+      .populate("sender", "name picture")
+      .sort("createdAt");
     if (!notifications) {
       res.status(400);
       throw new Error("error happens when fetch the notifications");

@@ -383,9 +383,9 @@ const getPublicUsers = asyncHandler(async (req, res) => {
     const users = await User.find({
       $and: [
         { _id: { $ne: req.user._id } },
-        { $or: [{ isNutritionist: true }, { isTranier: true }] },
+        { $or: [{ isNutritionist: true }, { isTrainer: true }] },
       ],
-    }).select("picture name followingList");
+    }).select("picture name followingList followersList");
 
     res.send(users);
   } catch (error) {

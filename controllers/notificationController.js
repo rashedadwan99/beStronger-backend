@@ -55,8 +55,30 @@ const deleteNotification = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+
+const readNotification = asyncHandler(async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.notificationId,
+      {
+        isRead: true,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!notification) {
+      res.status(400);
+      throw new Error("the notification was not found");
+    }
+    res.send(notification);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
 module.exports = {
   sendNotification,
   getNotifications,
   deleteNotification,
+  readNotification,
 };

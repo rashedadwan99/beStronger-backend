@@ -327,10 +327,9 @@ const editUserInfo = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("error occured");
     }
-    const posts = await Post.find({ publisher: req.user._id }).populate(
-      "publisher",
-      "name _id picture"
-    );
+    const posts = await Post.find({ publisher: req.user._id })
+      .populate("publisher", "name _id picture")
+      .sort("-createdAt");
     res.send({ user, posts });
   } catch (error) {
     res.status(400);

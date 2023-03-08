@@ -3,6 +3,7 @@ const _ = require("lodash");
 const bcrybt = require("bcrypt");
 const { User } = require("../models/userModel");
 const { Post } = require("../models/postModel");
+const bcrypt = require("bcrypt");
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
@@ -12,8 +13,7 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error("the user is already exists");
     }
     user = await new User(_.pick(req.body, ["name", "email", "password"]));
-    const salt = await bcrybt.genSalt(10);
-    user.password = await bcrybt.hash(user.password, salt);
+    hashPassword(user);
     const token = user.generateAuthToken();
     await user.save();
     res
@@ -32,8 +32,6 @@ const registerUser = asyncHandler(async (req, res) => {
         ])
       );
   } catch (error) {
-    res.status(400);
-    console.log(error.message);
     throw new Error(error.message);
   }
 });
@@ -47,7 +45,6 @@ const getUser = asyncHandler(async (req, res) => {
     }
     res.send(user);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -58,10 +55,9 @@ const getFollowersList = asyncHandler(async (req, res) => {
     if (!user) return res.status(404).send("user was not found!");
     const followersusers = await User.find({
       _id: { $in: user.followersList },
-    }).select("picture name _id ");
+    }).select("picture name _id followingList");
     res.send(followersusers);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -71,10 +67,9 @@ const getFollowingList = asyncHandler(async (req, res) => {
     if (!user) return res.status(404).send("user was not found!");
     const followingsusers = await User.find({
       _id: { $in: user.followingList },
-    }).select("picture name _id ");
+    }).select("picture name _id followingList");
     res.send(followingsusers);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -124,7 +119,6 @@ const sendFollow = asyncHandler(async (req, res) => {
     );
     res.send({ reciverUser, senderUser });
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -175,7 +169,6 @@ const sendUnfollow = asyncHandler(async (req, res) => {
 
     res.send({ reciverUser, senderUser });
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -286,7 +279,6 @@ const blockUser = asyncHandler(async (req, res) => {
 
     res.send(user);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -307,7 +299,6 @@ const unBlockUser = asyncHandler(async (req, res) => {
 
     res.send(user);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -332,7 +323,6 @@ const editUserInfo = asyncHandler(async (req, res) => {
       .sort("-createdAt");
     res.send({ user, posts });
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -356,7 +346,6 @@ const searchUser = asyncHandler(async (req, res) => {
     }
     res.send(users);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -372,7 +361,6 @@ const getBlockList = asyncHandler(async (req, res) => {
     }
     res.send(users);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
@@ -388,11 +376,45 @@ const getPublicUsers = asyncHandler(async (req, res) => {
 
     res.send(users);
   } catch (error) {
-    res.status(400);
     throw new Error(error.message);
   }
 });
+const changePassword = asyncHandler(async (req, res) => {
+  try {
+    let user = await User.findById(req.user._id);
 
+    const { oldPassword, newPassword1, newPassword2 } = req.body;
+
+    const validPassword = await bcrypt.compare(oldPassword, user.password);
+    if (!validPassword) {
+      res.status(400);
+      throw new Error("invalid password");
+    }
+    if (newPassword1 !== newPassword2) {
+      res.status(400);
+      throw new Error("the new passwords aren't the same");
+    }
+    user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        password: newPassword1,
+      },
+      {
+        new: true,
+      }
+    );
+    hashPassword(user);
+
+    res.send({ message: "the password is changed successfully !" });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+async function hashPassword(user) {
+  const salt = await bcrybt.genSalt(10);
+  user.password = await bcrybt.hash(user.password, salt);
+  await user.save();
+}
 module.exports = {
   registerUser,
   getUser,
@@ -402,7 +424,7 @@ module.exports = {
   sendUnfollow,
   blockUser,
   unBlockUser,
-
+  changePassword,
   searchUser,
   getBlockList,
   getPublicUsers,

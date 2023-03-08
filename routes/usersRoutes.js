@@ -13,6 +13,7 @@ const {
   searchUser,
   getBlockList,
   getPublicUsers,
+  changePassword,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
 
@@ -28,4 +29,5 @@ router.get("/blockList", auth, getBlockList);
 router.put("/editUserInfo", auth, editUserInfo);
 router.get("/:userId/getUser", auth, getUser);
 router.get("/publicUsers", auth, getPublicUsers);
+router.put("/changePassword", auth, changePassword);
 module.exports = router;

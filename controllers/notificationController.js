@@ -28,7 +28,7 @@ const getNotifications = asyncHandler(async (req, res) => {
       reciver: req.user._id,
     })
       .populate("sender", "name picture")
-      .sort("createdAt");
+      .sort("-createdAt");
     if (!notifications) {
       res.status(400);
       throw new Error("error happens when fetch the notifications");

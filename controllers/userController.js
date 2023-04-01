@@ -10,7 +10,7 @@ const registerUser = asyncHandler(async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (user) {
       res.status(400);
-      throw new Error("the user is already exists");
+      throw new Error("the user already exists");
     }
     user = await new User(_.pick(req.body, ["name", "email", "password"]));
     hashPassword(user);

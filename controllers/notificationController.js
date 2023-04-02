@@ -46,7 +46,7 @@ const deleteNotification = asyncHandler(async (req, res) => {
       $and: [{ sender: req.query.senderId }, { targetId: req.query.targetId }],
     });
     const post = await Post.findById(req.query.targetId);
-    if (!notitication && post.publisher === req.query.senderId) {
+    if (!notitication && post && post.publisher === req.query.senderId) {
       res.status("400");
       throw new Error("the notification is not found");
     }

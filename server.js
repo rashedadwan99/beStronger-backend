@@ -16,7 +16,7 @@ const server = app.listen(port, () => {
 });
 io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://bestrong-client.onrender.com/",
   },
 });
 io.on("connection", (socket) => {

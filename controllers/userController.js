@@ -52,7 +52,7 @@ const getUser = asyncHandler(async (req, res) => {
 const getFollowersList = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).send("user was not found!");
+    if (!user) return res.status(400).send("user was not found!");
     const followersusers = await User.find({
       _id: { $in: user.followersList },
     }).select("picture name _id followingList");

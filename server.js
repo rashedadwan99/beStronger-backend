@@ -19,15 +19,12 @@ io = socket(server, {
     origin: ["https://bestrong-client.onrender.com", "http://localhost:3000"],
   },
 });
-const connectedUsers = {};
 io.on("connection", (socket) => {
   socket.emit("connected");
+
   socket.on("setup", (userId) => {
-    if (!connectedUsers[userId]) {
-      connectedUsers[userId] = socket;
-      socket.join(userId);
-      console.log("user connected with ID " + userId);
-    }
+    socket.join(userId);
+    console.log("user connected with ID " + userId + " socket id", socket._id);
   });
   socket.on("new notification", (notification) => {
     if (notification.reciver === notification.sender._id) return;
@@ -42,7 +39,7 @@ io.on("connection", (socket) => {
   });
   socket.off("setup", (userId) => {
     console.log("USER DISCONNECTED");
+
     socket.leave(userId);
-    delete connectedUsers[userId];
   });
 });

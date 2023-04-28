@@ -19,26 +19,37 @@ io = socket(server, {
     origin: ["https://bestrong-client.onrender.com", "http://localhost:3000"],
   },
 });
+const connectedUsers = {};
 io.on("connection", (socket) => {
-  console.log("connected to socket.io");
   socket.on("setup", (userId) => {
-    socket.join(userId);
-    socket.emit("connected");
+    if (connectedUsers[userId]) {
+      connectedUsers[userId].disconnect(true);
+    }
+    connectedUsers[userId] = socket;
+    connectedUsers[userId].join(userId);
+    connectedUsers[userId].emit("connected");
     console.log("user connected with ID " + userId);
   });
-  socket.on("new notification", (notification) => {
+  connectedUsers[userId].on("new notification", (notification) => {
     if (notification.reciver === notification.sender._id) return;
-    socket.in(notification.reciver).emit("notification recived", notification);
+    connectedUsers[userId]
+      .in(notification.reciver)
+      .emit("notification recived", notification);
   });
-  socket.on("delete notification", (reciverId, notification) => {
-    socket.in(reciverId).emit("remove notification", notification);
-  });
-  socket.on("leave room", (userId) => {
-    socket.leave(userId);
+  connectedUsers[userId].on(
+    "delete notification",
+    (reciverId, notification) => {
+      connectedUsers[userId]
+        .in(reciverId)
+        .emit("remove notification", notification);
+    }
+  );
+  connectedUsers[userId].on("leave room", (userId) => {
+    connectedUsers[userId].leave(userId);
     console.log("user disconnected with ID " + userId);
   });
-  socket.off("setup", (userId) => {
+  connectedUsers[userId].off("setup", (userId) => {
     console.log("USER DISCONNECTED");
-    socket.leave(userId);
+    connectedUsers[userId].leave(userId);
   });
 });

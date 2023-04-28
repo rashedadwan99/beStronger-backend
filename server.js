@@ -15,6 +15,8 @@ const server = app.listen(port, () => {
   winston.info(`listening on port ${port}`);
 });
 io = socket(server, {
+  pingInterval: 5000, // send a heartbeat message every 5 seconds
+  pingTimeout: 15000, // consider the connection dead if no message received within 15 seconds
   cors: {
     origin: ["https://bestrong-client.onrender.com", "http://localhost:3000"],
   },

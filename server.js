@@ -21,11 +21,11 @@ io = socket(server, {
 });
 const connectedUsers = {};
 io.on("connection", (socket) => {
+  socket.emit("connected");
   socket.on("setup", (userId) => {
     if (!connectedUsers[userId]) {
       connectedUsers[userId] = socket;
       socket.join(userId);
-      socket.emit("connected");
       console.log("user connected with ID " + userId);
     }
   });

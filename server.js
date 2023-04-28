@@ -29,27 +29,27 @@ io.on("connection", (socket) => {
     connectedUsers[userId].join(userId);
     connectedUsers[userId].emit("connected");
     console.log("user connected with ID " + userId);
-  });
-  connectedUsers[userId].on("new notification", (notification) => {
-    if (notification.reciver === notification.sender._id) return;
-    connectedUsers[userId]
-      .in(notification.reciver)
-      .emit("notification recived", notification);
-  });
-  connectedUsers[userId].on(
-    "delete notification",
-    (reciverId, notification) => {
+    connectedUsers[userId].on("new notification", (notification) => {
+      if (notification.reciver === notification.sender._id) return;
       connectedUsers[userId]
-        .in(reciverId)
-        .emit("remove notification", notification);
-    }
-  );
-  connectedUsers[userId].on("leave room", (userId) => {
-    connectedUsers[userId].leave(userId);
-    console.log("user disconnected with ID " + userId);
-  });
-  connectedUsers[userId].off("setup", (userId) => {
-    console.log("USER DISCONNECTED");
-    connectedUsers[userId].leave(userId);
+        .in(notification.reciver)
+        .emit("notification recived", notification);
+    });
+    connectedUsers[userId].on(
+      "delete notification",
+      (reciverId, notification) => {
+        connectedUsers[userId]
+          .in(reciverId)
+          .emit("remove notification", notification);
+      }
+    );
+    connectedUsers[userId].on("leave room", (userId) => {
+      connectedUsers[userId].leave(userId);
+      console.log("user disconnected with ID " + userId);
+    });
+    connectedUsers[userId].off("setup", (userId) => {
+      console.log("USER DISCONNECTED");
+      connectedUsers[userId].leave(userId);
+    });
   });
 });

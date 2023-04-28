@@ -21,7 +21,7 @@ io = socket(server, {
 });
 io.on("connection", (socket) => {
   socket.emit("connected");
-
+  console.log("socket connected");
   socket.on("setup", (userId) => {
     socket.join(userId);
     console.log("user connected with ID " + userId + " socket id", socket.id);

@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
 
   socket.on("setup", (userId) => {
     socket.join(userId);
-    console.log("user connected with ID " + userId + " socket id", socket._id);
+    console.log("user connected with ID " + userId + " socket id", socket.id);
   });
   socket.on("new notification", (notification) => {
     if (notification.reciver === notification.sender._id) return;

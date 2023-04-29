@@ -2,7 +2,32 @@ const expressAsyncHandler = require("express-async-handler");
 const { Chat } = require("../models/chatModel");
 const { Message } = require("../models/messageModel");
 const { User } = require("../models/userModel");
+const getAllChat = expressAsyncHandler(async (req, res) => {
+  try {
+    let chats = await Chat.find({
+      users: {
+        $in: req.user._id,
+      },
+    }).populate("users", "_id name picture");
+    chats = await Message.populate(chats, {
+      path: "latestMessage",
+      select: "content sender",
+    });
+    chats = await User.populate(chats, {
+      path: "latestMessage.sender",
+      select: "name",
+    });
 
+    if (!chats) {
+      res.status(400);
+      throw new Error("an error has occured");
+    }
+
+    res.send(chats);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
 const createChat = expressAsyncHandler(async (req, res) => {
   try {
     let chat = await Chat.create({
@@ -19,7 +44,7 @@ const createChat = expressAsyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
-const getChat = expressAsyncHandler(async (req, res) => {
+const getSingleChat = expressAsyncHandler(async (req, res) => {
   try {
     let chat = await Chat.findById(req.params.chatId).populate(
       "users",
@@ -43,6 +68,7 @@ const getChat = expressAsyncHandler(async (req, res) => {
   }
 });
 module.exports = {
+  getAllChat,
   createChat,
-  getChat,
+  getSingleChat,
 };

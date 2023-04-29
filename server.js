@@ -44,4 +44,7 @@ io.on("connection", (socket) => {
 
     socket.leave(userId);
   });
+  socket.on("disconnect", () => {
+    console.log("WebSocket connection closed");
+  });
 });

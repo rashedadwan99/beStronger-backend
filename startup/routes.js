@@ -8,6 +8,7 @@ const notifications = require("../routes/notificationRoutes");
 const socialMedia = require("../routes/socialMediaRoutes");
 const message = require("../routes/messageRoutes");
 const chat = require("../routes/chatRoutes");
+const comment = require("../routes/commentRoutes");
 const { notFound, errorHandler } = require("../middleware/error");
 module.exports = (app) => {
   app.use(express.json());
@@ -21,6 +22,7 @@ module.exports = (app) => {
   app.use("/api/socialMedia", socialMedia);
   app.use("/api/message", message);
   app.use("/api/chat", chat);
+  app.use("/api/comment", comment);
   app.use(notFound);
   app.use(errorHandler);
   app.use(error);

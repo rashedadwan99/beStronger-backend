@@ -29,7 +29,9 @@ const sendMessage = asyncHandler(async (req, res) => {
 });
 const getMessages = asyncHandler(async (req, res) => {
   try {
-    const messages = await Message.find({ chatId: req.params.chatId });
+    const messages = await Message.find({ chatId: req.params.chatId })
+      .select("-chatId")
+      .populate("sender", "name picture");
     if (!messages) {
       res.status(400);
       throw new Error("error occured when getting the messages");

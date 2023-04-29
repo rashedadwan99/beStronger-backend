@@ -6,6 +6,6 @@ const {
 const auth = require("../middleware/auth");
 const router = express.Router();
 router.route("/").post(auth, sendMessage);
-router.route("/:chatId").get(auth, getMessages);
+router.route("/:chatId/getMessages").get(auth, getMessages);
 
 module.exports = router;

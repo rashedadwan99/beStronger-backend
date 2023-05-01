@@ -4,7 +4,7 @@ const { Message } = require("../models/messageModel");
 
 const sendMessage = asyncHandler(async (req, res) => {
   try {
-    const message = await Message.create({
+    let message = await Message.create({
       sender: req.user._id,
       chatId: req.body.chatId,
       content: req.body.content,
@@ -13,6 +13,7 @@ const sendMessage = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("error occured when sending a message");
     }
+    message = await message.populate("sender", "name picture");
     await Chat.findByIdAndUpdate(
       message.chatId,
       {

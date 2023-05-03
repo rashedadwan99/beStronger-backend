@@ -35,6 +35,7 @@ const createChat = expressAsyncHandler(async (req, res) => {
     let chat = await Chat.create({
       users: [...req.body.users],
       isGroupChat: req.body.isGroupChat,
+      groupChatName: req.body.groupChatName,
     });
     if (!chat) {
       res.status(400);

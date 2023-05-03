@@ -10,7 +10,7 @@ const getAllChat = expressAsyncHandler(async (req, res) => {
       },
     })
       .populate("users", "_id name picture")
-      .sort("updatedAt");
+      .sort("-updatedAt");
     chats = await Message.populate(chats, {
       path: "latestMessage",
       select: "content sender",

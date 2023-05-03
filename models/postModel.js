@@ -15,26 +15,6 @@ const postSchema = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       default: [],
     },
-    comments: {
-      type: [
-        new mongoose.Schema(
-          {
-            commenter: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "User",
-            },
-            content: String,
-            picture: String,
-          },
-          {
-            timestamps: true,
-          }
-        ),
-      ],
-      default: [],
-    },
-
-    numOfComments: { type: Number, default: 0, min: 0, default: 0 },
   },
   {
     timestamps: true,

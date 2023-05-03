@@ -13,8 +13,8 @@ const getAllPosts = asyncHandler(async (req, res) => {
       ],
     })
       .sort("-createdAt -comments.createdAt")
-      .populate("publisher", "name _id picture")
-      .select("-comments");
+      .populate("publisher", "name _id picture");
+
     res.send(posts);
   } catch (error) {
     res.status(400);
@@ -34,7 +34,7 @@ const addPost = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("the post was not published successfully");
     }
-    post = await Post.findById(post._id).select("-comments");
+    post = await Post.findById(post._id);
     post = await User.populate(post, {
       path: "publisher",
       select: "name picture _id",
@@ -53,8 +53,8 @@ const getPostsOfExactUser = asyncHandler(async (req, res) => {
       publisher: req.params.userId,
     })
       .sort("-updatedAt")
-      .populate("publisher", "name _id picture")
-      .select("-comments");
+      .populate("publisher", "name _id picture");
+
     const blockedMe = await User.findOne({
       $and: [
         {
@@ -137,9 +137,8 @@ const updatePostContent = asyncHandler(async (req, res) => {
       {
         new: true,
       }
-    )
-      .populate("publisher", "name email _id picture")
-      .select("-comments");
+    ).populate("publisher", "name email _id picture");
+
     if (!post) {
       res.status(400);
       throw new Error("the post was not found");
@@ -169,16 +168,14 @@ const likePost = asyncHandler(async (req, res) => {
         $inc: { numOfLikes: 1 },
       },
       { new: true }
-    )
-      .populate("publisher", "name email _id picture")
-      .select("-comments");
+    ).populate("publisher", "name email _id picture");
 
     if (!post) {
       res.status(400);
       throw new Error("the post was not found");
     }
 
-    res.send(_.pick(post, ["likes", "numOfLikes"]));
+    res.send(req.user._id);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);
@@ -203,10 +200,8 @@ const disLikePost = asyncHandler(async (req, res) => {
         $inc: { numOfLikes: -1 },
       },
       { new: true }
-    )
-      .populate("publisher", "name email _id picture")
-      .select("-comments");
-
+    ).populate("publisher", "name email _id picture");
+    res.send(req.user._id);
     if (!post) {
       res.status(400);
       throw new Error("the post was not found");
@@ -218,72 +213,6 @@ const disLikePost = asyncHandler(async (req, res) => {
   }
 });
 
-const getComments = asyncHandler(async (req, res) => {
-  try {
-    let post = await Post.findById(req.params.postId)
-      .populate("publisher", "name email _id picture")
-      .populate("comments.commenter", "name _id picture");
-    if (!post) {
-      res.status(400);
-      throw new Error("the post was deleted");
-    }
-    res.send(post.comments);
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
-  }
-});
-
-const addComment = asyncHandler(async (req, res) => {
-  try {
-    const post = await Post.findByIdAndUpdate(
-      req.params.postId,
-      {
-        $push: {
-          comments: {
-            commenter: req.user._id,
-            content: req.body.content,
-          },
-        },
-        $inc: { numOfComments: 1 },
-      },
-      { new: true }
-    ).populate("comments.commenter", "name _id picture");
-    if (!post) {
-      res.status(400);
-      throw new Error("the post was deleted");
-    }
-    res.send(_.pick(post, ["comments", "numOfComments"]));
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
-  }
-});
-
-const deleteComment = asyncHandler(async (req, res) => {
-  try {
-    const post = await Post.findByIdAndUpdate(
-      req.params.postId,
-      {
-        $pull: {
-          comments: { _id: req.params.commentId },
-        },
-        $inc: { numOfComments: -1 },
-      },
-      {
-        new: true,
-      }
-    ).populate("comments.commenter", "name _id picture");
-    if (!post) {
-      res.status(400);
-      throw new Error("the post was deleted");
-    }
-    res.send(_.pick(post, ["comments", "numOfComments"]));
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
-  }
-});
 module.exports = {
   getAllPosts,
   addPost,
@@ -294,7 +223,4 @@ module.exports = {
   updatePostContent,
   likePost,
   disLikePost,
-  getComments,
-  addComment,
-  deleteComment,
 };

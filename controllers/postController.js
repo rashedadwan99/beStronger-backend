@@ -201,12 +201,12 @@ const disLikePost = asyncHandler(async (req, res) => {
       },
       { new: true }
     ).populate("publisher", "name email _id picture");
-    res.send(req.user._id);
     if (!post) {
       res.status(400);
       throw new Error("the post was not found");
     }
-    res.send(post);
+
+    res.send(req.user._id);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);

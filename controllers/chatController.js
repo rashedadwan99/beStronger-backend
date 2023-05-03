@@ -8,7 +8,9 @@ const getAllChat = expressAsyncHandler(async (req, res) => {
       users: {
         $in: req.user._id,
       },
-    }).populate("users", "_id name picture");
+    })
+      .populate("users", "_id name picture")
+      .sort("updatedAt");
     chats = await Message.populate(chats, {
       path: "latestMessage",
       select: "content sender",
@@ -32,7 +34,7 @@ const createChat = expressAsyncHandler(async (req, res) => {
   try {
     let chat = await Chat.create({
       users: [...req.body.users],
-      chatType: req.body.chatType,
+      isGroupChat: req.body.isGroupChat,
     });
     if (!chat) {
       res.status(400);

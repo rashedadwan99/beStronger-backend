@@ -1,7 +1,17 @@
 const express = require("express");
 
 const auth = require("../middleware/auth");
-const { getAllPosts, addPost, getPostsOfExactUser, getOnePost, getPostFans, deletePost, updatePostContent, likePost, disLikePost, getComments, addComment, deleteComment } = require("../controllers/postController");
+const {
+  getAllPosts,
+  addPost,
+  getPostsOfExactUser,
+  getOnePost,
+  getPostFans,
+  deletePost,
+  updatePostContent,
+  likePost,
+  disLikePost,
+} = require("../controllers/postController");
 const router = express.Router();
 
 /**get all posts */ /** add post */
@@ -26,11 +36,4 @@ router.put("/:postId/like", auth, likePost);
 router.put("/:postId/disLike", auth, disLikePost);
 /** get comments */
 
-router.get("/:postId/getComments", auth, getComments);
-
-/** add comment */
-router.put("/:postId/addComment", auth, addComment);
-
-/** remove comment */
-router.put("/:postId/:commentId/deleteComment", auth, deleteComment);
 module.exports = router;

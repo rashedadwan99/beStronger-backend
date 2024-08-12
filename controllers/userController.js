@@ -334,11 +334,11 @@ const searchUser = asyncHandler(async (req, res) => {
         {
           $or: [
             {
-              name: { $regex: req.query.searchQuery.toString(), $options: "i" },
+              name: { $regex: `${req.query.searchQuery}`, $options: "i" },
             },
             {
               email: {
-                $regex: req.query.searchQuery.toString(),
+                $regex: `${req.query.searchQuery}`,
                 $options: "i",
               },
             },

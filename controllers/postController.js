@@ -52,7 +52,7 @@ const getPostsOfExactUser = asyncHandler(async (req, res) => {
     const posts = await Post.find({
       publisher: req.params.userId,
     })
-      .sort("-updatedAt")
+      .sort("-createdAt")
       .populate("publisher", "name _id picture");
 
     const blockedMe = await User.findOne({

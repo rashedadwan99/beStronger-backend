@@ -12,6 +12,7 @@ const notificationSchema = new mongoose.Schema(
     message: { type: String },
     targetId: { type: String },
     isRead: { type: Boolean, default: false },
+    isPostNotification: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

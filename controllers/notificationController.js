@@ -9,6 +9,7 @@ const sendNotification = asyncHandler(async (req, res) => {
       sender: req.user._id,
       message: req.body.message,
       targetId: req.body.targetId,
+      isPostNotification: req.body.isPostNotification,
     });
     if (!notification) {
       res.status(400);

@@ -97,7 +97,8 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
       reciver: req.body.reciverId,
       sender: req.user._id,
       message: req.body.message,
-      targetId: req.body.targetId,
+      postId: req.body.postId,
+      commentId: req.body.commentId,
       isPostNotification: req.body.isPostNotification,
     });
     if (!notification) {
@@ -110,10 +111,36 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
+  try {
+    let notification;
+    if (req.params.commentId)
+      notification = await Notification.findOneAndRemove({
+        $and: [{ sender: req.user._id }, { commentId: req.params.commentId }],
+      });
+    if (req.params.postId)
+      notification = await Notification.findOneAndRemove({
+        $and: [{ sender: req.user._id }, , { postId: req.params.postId }],
+      });
+    if (req.params.followId)
+      notification = await Notification.findOneAndRemove({
+        $and: [{ sender: req.user._id }, { followId: req.params.followId }],
+      });
+    if (!notification) {
+      res.status(400);
+      throw new Error("the notification was not found");
+    } else res.send({ message: "the notification is deleted successfully !" });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
 module.exports = {
   sendNotification,
   getNotifications,
   deleteNotification,
   readNotification,
   deleteMobileNotification,
+  sendMobileNotification,
+  deleteNoticiationFromSender,
 };

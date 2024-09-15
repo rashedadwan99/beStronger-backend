@@ -41,6 +41,9 @@ const addComment = expressAsyncHandler(async (req, res) => {
 const deleteComment = expressAsyncHandler(async (req, res) => {
   try {
     const comment = await Comment.findByIdAndDelete(req.params.commentId);
+    await Notification.deleteMany({
+      commentId: req.params.commentId,
+    });
     if (!comment) {
       res.status(400);
       throw new Error("an error has occured");

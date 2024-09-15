@@ -99,6 +99,7 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
       message: req.body.message,
       postId: req.body.postId,
       commentId: req.body.commentId,
+      followId: req.body.followId,
       isPostNotification: req.body.isPostNotification,
     });
     if (!notification) {

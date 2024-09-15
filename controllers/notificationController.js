@@ -77,9 +77,43 @@ const readNotification = asyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
+
+const deleteMobileNotification = asyncHandler(async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndDelete(
+      req.params.notificationId
+    );
+    if (!notification) {
+      res.status(400);
+      throw new Error("the notification was not found");
+    } else res.send({ message: "the notification is deleted successfully !" });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+const sendMobileNotification = asyncHandler(async (req, res) => {
+  try {
+    const notification = await Notification.create({
+      reciver: req.body.reciverId,
+      sender: req.user._id,
+      message: req.body.message,
+      targetId: req.body.targetId,
+      isPostNotification: req.body.isPostNotification,
+    });
+    if (!notification) {
+      res.status(400);
+      throw new Error("error happens when pushing a new notification");
+    }
+    notification = await notification.populate("sender", "name picture");
+    res.status(200).send(notification);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
 module.exports = {
   sendNotification,
   getNotifications,
   deleteNotification,
   readNotification,
+  deleteMobileNotification,
 };

@@ -81,7 +81,7 @@ const readNotification = asyncHandler(async (req, res) => {
 const deleteMobileNotification = asyncHandler(async (req, res) => {
   try {
     const notification = await Notification.findByIdAndDelete(
-      req.params.notificationId
+      req.query.notificationId
     );
     if (!notification) {
       res.status(400);
@@ -113,6 +113,7 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
   }
 });
 const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
+  console.log(req.user._id, " ", req.query);
   try {
     let notification;
     if (req.query.commentId) {

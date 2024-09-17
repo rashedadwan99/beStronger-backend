@@ -114,7 +114,7 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
 });
 const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
   try {
-    console.log(req.params);
+    console.log(req.query);
     let notification;
     if (req.params.commentId)
       notification = await Notification.deleteOne({

@@ -116,15 +116,15 @@ const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
   try {
     let notification;
     if (req.params.commentId)
-      notification = await Notification.findOneAndRemove({
+      notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, { commentId: req.params.commentId }],
       });
     if (req.params.postId)
-      notification = await Notification.findOneAndRemove({
+      notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, , { postId: req.params.postId }],
       });
     if (req.params.followId)
-      notification = await Notification.findOneAndRemove({
+      notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, { followId: req.params.followId }],
       });
     if (!notification) {

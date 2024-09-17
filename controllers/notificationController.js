@@ -115,18 +115,19 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
 const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
   try {
     let notification;
-    if (req.query.commentId)
+    if (req.query.commentId) {
       notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, { commentId: req.query.commentId }],
       });
-    if (req.query.postId)
+    } else if (req.query.postId) {
       notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, , { postId: req.query.postId }],
       });
-    if (req.query.followId)
+    } else if (req.query.followId) {
       notification = await Notification.deleteOne({
         $and: [{ sender: req.user._id }, { followId: req.query.followId }],
       });
+    }
     if (!notification) {
       res.status(400);
       throw new Error("the notification was not found");

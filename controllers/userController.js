@@ -127,7 +127,7 @@ const sendUnfollow = asyncHandler(async (req, res) => {
   try {
     let senderUser = await User.findById(req.user._id);
     let reciverUser = await User.findById(req.params.reciverUserId);
- 
+
     if (!senderUser || !reciverUser) {
       res.status(400);
       throw new Error("the user was not found");

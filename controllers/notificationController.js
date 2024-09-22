@@ -94,6 +94,7 @@ const deleteMobileNotification = asyncHandler(async (req, res) => {
 const sendMobileNotification = asyncHandler(async (req, res) => {
   try {
     let notification = await Notification.create({
+      targetId: req.body.targetId,
       reciver: req.body.reciverId,
       sender: req.user._id,
       message: req.body.message,

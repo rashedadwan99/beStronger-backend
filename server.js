@@ -30,7 +30,9 @@ io.on("connection", (socket) => {
   });
   socket.on("new notification", (notification) => {
     if (notification.reciver === notification.sender._id) return;
+
     socket.in(notification.reciver).emit("notification recived", notification);
+    console.log("koshneet la elrokb");
   });
   socket.on("delete notification", (reciverId, notification) => {
     socket.in(reciverId).emit("remove notification", notification);

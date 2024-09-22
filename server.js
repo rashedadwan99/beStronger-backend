@@ -17,9 +17,9 @@ const server = app.listen(port, () => {
 io = socket(server, {
   pingInterval: 5000, // send a heartbeat message every 5 seconds
   // pingTimeout: 15000, // consider the connection dead if no message received within 15 seconds
-  // cors: {
-  //   origin: ["https://bestrong-client.onrender.com", "http://localhost:3000"],
-  // },
+  cors: {
+    origin: "*",
+  },
 });
 io.on("connection", (socket) => {
   socket.emit("connected");
@@ -31,7 +31,6 @@ io.on("connection", (socket) => {
   socket.on("new notification", (notification) => {
     if (notification.reciver === notification.sender._id) return;
 
-    console.log("koshneet la elrokb");
     socket.in(notification.reciver).emit("notification recived", notification);
   });
   socket.on("delete notification", (reciverId, notification) => {

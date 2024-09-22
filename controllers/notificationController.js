@@ -131,7 +131,11 @@ const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
     if (!notification) {
       res.status(400);
       throw new Error("the notification was not found");
-    } else res.send({ message: "the notification is deleted successfully !" });
+    } else
+      res.send({
+        message: "the notification is deleted successfully !",
+        notification,
+      });
   } catch (error) {
     throw new Error(error.message);
   }

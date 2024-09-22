@@ -115,29 +115,48 @@ const sendMobileNotification = asyncHandler(async (req, res) => {
 const deleteNoticiationFromSender = asyncHandler(async (req, res) => {
   try {
     let notification;
+
     if (req.query.commentId) {
-      notification = await Notification.deleteOne({
+      notification = await Notification.findOne({
         $and: [{ sender: req.user._id }, { commentId: req.query.commentId }],
       });
     } else if (req.query.postId) {
-      notification = await Notification.deleteOne({
+      notification = await Notification.findOne({
         $and: [{ sender: req.user._id }, { postId: req.query.postId }],
       });
     } else if (req.query.followId) {
-      notification = await Notification.deleteOne({
+      notification = await Notification.findOne({
         $and: [{ sender: req.user._id }, { followId: req.query.followId }],
       });
     }
+
     if (!notification) {
       res.status(400);
-      throw new Error("the notification was not found");
-    } else
-      res.send({
-        message: "the notification is deleted successfully !",
-        notification,
+      throw new Error("The notification was not found");
+    }
+
+    // Send the notification before deletion
+    res.send({
+      message: "The notification will be deleted.",
+      notification,
+    });
+
+    // Proceed to delete the notification
+    if (req.query.commentId) {
+      await Notification.deleteOne({
+        $and: [{ sender: req.user._id }, { commentId: req.query.commentId }],
       });
+    } else if (req.query.postId) {
+      await Notification.deleteOne({
+        $and: [{ sender: req.user._id }, { postId: req.query.postId }],
+      });
+    } else if (req.query.followId) {
+      await Notification.deleteOne({
+        $and: [{ sender: req.user._id }, { followId: req.query.followId }],
+      });
+    }
   } catch (error) {
-    throw new Error(error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 

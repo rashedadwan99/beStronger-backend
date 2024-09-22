@@ -111,7 +111,7 @@ const getPostFans = asyncHandler(async (req, res) => {
 const deletePost = asyncHandler(async (req, res) => {
   try {
     await Notification.deleteMany({
-      $or: [{ targetId: req.params.postId, postId: req.params.postId }],
+      $or: [{ targetId: req.params.postId }, { postId: req.params.postId }],
     });
     const post = await Post.findByIdAndRemove(req.params.postId);
     if (!post) {
